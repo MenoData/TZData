@@ -53,8 +53,7 @@ import java.util.TimeZone;
  * {@code net.time4j.tool.TimezoneRepositoryCompiler}. </p>
  *
  * @author  Meno Hochschild
- * @since   2.3
- * @exclude
+ * @since   1.0
  */
 public class TimezoneRepositoryProviderSPI
     implements ZoneProvider, LeapSecondProvider {
