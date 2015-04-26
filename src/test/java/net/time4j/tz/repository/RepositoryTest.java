@@ -1,21 +1,22 @@
 package net.time4j.tz.repository;
 
-import net.time4j.Iso8601Format;
 import net.time4j.Moment;
-import net.time4j.PatternType;
 import net.time4j.PlainTimestamp;
-import net.time4j.format.ChronoFormatter;
+import net.time4j.format.expert.ChronoFormatter;
+import net.time4j.format.expert.Iso8601Format;
+import net.time4j.format.expert.PatternType;
 import net.time4j.tz.ZonalTransition;
 import net.time4j.tz.ZoneProvider;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
+import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -569,9 +570,10 @@ public class RepositoryTest {
 
     private static long parse(String time) throws ParseException {
         ChronoFormatter<Moment> p =
-            Moment.localFormatter(
+            ChronoFormatter.setUp(Moment.class, Locale.ROOT).addPattern(
                 "uuuu-MM-dd'T'HH:mmXXXXX",
-                PatternType.CLDR);
+                PatternType.CLDR
+            ).build();
         return p.parse(time).getPosixTime();
     }
 

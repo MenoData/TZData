@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.time4j</groupId>
     <artifactId>time4j-tzdata</artifactId>
-    <version>1.1-2015b</version>
+    <version>1.2-2015d</version>
     <packaging>jar</packaging>
     <name>Time4J-TZDATA</name>
     
@@ -196,14 +196,20 @@
         <dependency>
             <groupId>net.time4j</groupId>
             <artifactId>time4j-core</artifactId>
-            <version>[2.4,3.0)</version>
+            <version>[3.0,4.0)</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.time4j</groupId>
             <artifactId>time4j-olson</artifactId>
-            <version>[2.4,3.0)</version>
+            <version>[3.0,4.0)</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.time4j</groupId>
+            <artifactId>time4j-i18n</artifactId>
+            <version>[3.0,4.0)</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
