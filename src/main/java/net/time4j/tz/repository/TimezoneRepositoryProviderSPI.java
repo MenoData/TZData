@@ -28,7 +28,7 @@ import net.time4j.tz.NameStyle;
 import net.time4j.tz.Timezone;
 import net.time4j.tz.TransitionHistory;
 import net.time4j.tz.ZoneProvider;
-import net.time4j.tz.olson.ZoneNameProviderSPI;
+import net.time4j.tz.spi.ZoneNameProviderSPI;
 
 import java.io.File;
 import java.io.FileNotFoundException;
