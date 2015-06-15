@@ -24,6 +24,7 @@ package net.time4j.tz.repository;
 import net.time4j.PlainDate;
 import net.time4j.base.GregorianDate;
 import net.time4j.scale.LeapSecondProvider;
+import net.time4j.tz.ExtZoneProvider;
 import net.time4j.tz.NameStyle;
 import net.time4j.tz.Timezone;
 import net.time4j.tz.TransitionHistory;
@@ -56,7 +57,7 @@ import java.util.TimeZone;
  * @since   1.0
  */
 public class TimezoneRepositoryProviderSPI
-    implements ZoneProvider, LeapSecondProvider {
+    implements ExtZoneProvider, LeapSecondProvider {
 
     //~ Statische Felder/Initialisierungen --------------------------------
 
@@ -72,7 +73,7 @@ public class TimezoneRepositoryProviderSPI
         JDK_NAME_REFS = Collections.unmodifiableSet(jdkNameRefs);
     }
 
-    private static final ZoneProvider NAME_PROVIDER = new ZoneNameProviderSPI();
+    private static final ExtZoneProvider NAME_PROVIDER = new ZoneNameProviderSPI();
 
     //~ Instanzvariablen --------------------------------------------------
 
