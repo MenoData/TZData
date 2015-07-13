@@ -31,6 +31,8 @@ import net.time4j.tz.TransitionHistory;
 import net.time4j.tz.ZoneProvider;
 import net.time4j.tz.spi.ZoneNameProviderSPI;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -79,7 +81,7 @@ public class TimezoneRepositoryProviderSPI
 
     private final String version;
     private final String location;
-    private final Map<String, TransitionHistory> data;
+    private final Map<String, byte[]> data;
     private final Map<String, String> aliases;
     private final PlainDate expires;
     private final Map<GregorianDate, Integer> leapsecs;
@@ -91,16 +93,14 @@ public class TimezoneRepositoryProviderSPI
 
         URL url = null;
         InputStream is = null;
-        ObjectInputStream ois = null;
+        DataInputStream dis = null;
 
         String tmpVersion = "";
         String tmpLocation = "";
         PlainDate tmpExpires = PlainDate.axis().getMinimum();
 
-        Map<String, TransitionHistory> tmpData =
-            new HashMap<String, TransitionHistory>();
-        Map<String, String> tmpAliases =
-            new HashMap<String, String>();
+        Map<String, byte[]> tmpData = new HashMap<String, byte[]>();
+        Map<String, String> tmpAliases = new HashMap<String, String>();
 
         boolean noLeaps =
             (System.getProperty("net.time4j.scale.leapseconds.path") != null);
@@ -144,52 +144,59 @@ public class TimezoneRepositoryProviderSPI
 
             if (url != null) {
                 is = url.openStream();
-                ois = new ObjectInputStream(is);
+                dis = new DataInputStream(is);
                 tmpLocation = url.toString();
-                checkMagicLabel(ois, tmpLocation);
-                String v = ois.readUTF();
-                int sizeOfZones = ois.readInt();
+                checkMagicLabel(dis, tmpLocation);
+                String v = dis.readUTF();
+                int sizeOfZones = dis.readInt();
 
                 List<String> zones = new ArrayList<String>();
 
                 for (int i = 0; i < sizeOfZones; i++) {
-                    String zoneID = ois.readUTF();
-                    TransitionHistory th = (TransitionHistory) ois.readObject();
+                    String zoneID = dis.readUTF();
+                    int dataLen = dis.readInt();
+                    byte[] dataBuf = new byte[dataLen];
+                    int dataRead = dis.read(dataBuf, 0, dataLen);
+                    if (dataLen > dataRead) {
+                        byte[] tmpBuf = new byte[dataRead];
+                        System.arraycopy(dataBuf, 0, tmpBuf, 0, dataRead);
+                        dataBuf = tmpBuf;
+                    }
                     zones.add(zoneID);
-                    tmpData.put(zoneID, th);
+                    tmpData.put(zoneID, dataBuf);
                 }
 
-                int sizeOfLinks = ois.readShort();
+                int sizeOfLinks = dis.readShort();
 
                 for (int i = 0; i < sizeOfLinks; i++) {
-                    String alias = ois.readUTF();
-                    String id = zones.get(ois.readShort());
+                    String alias = dis.readUTF();
+                    String id = zones.get(dis.readShort());
                     tmpAliases.put(alias, id);
                 }
 
                 if (!noLeaps) {
-                    int sizeOfLeaps = ois.readShort();
+                    int sizeOfLeaps = dis.readShort();
 
                     for (int i = 0; i < sizeOfLeaps; i++) {
-                        int year = ois.readShort();
-                        int month = ois.readByte();
-                        int dom = ois.readByte();
-                        int shift = ois.readByte();
+                        int year = dis.readShort();
+                        int month = dis.readByte();
+                        int dom = dis.readByte();
+                        int shift = dis.readByte();
 
                         this.leapsecs.put(
                             PlainDate.of(year, month, dom),
                             Integer.valueOf(shift));
                     }
 
-                    tmpExpires = (PlainDate) ois.readObject();
+                    int year = dis.readShort();
+                    int month = dis.readByte();
+                    int dom = dis.readByte();
+                    tmpExpires = PlainDate.of(year, month, dom);
                 }
 
                 tmpVersion = v; // here all is okay, so let us set the version
             }
 
-        } catch (ClassNotFoundException cnfe) {
-            System.out.println(
-                "Note: TZ-repository corrupt. => " + cnfe.getMessage());
         } catch (IOException ioe) {
             System.out.println(
                 "Note: TZ-repository not available. => " + ioe.getMessage());
@@ -257,7 +264,17 @@ public class TimezoneRepositoryProviderSPI
     @Override
     public TransitionHistory load(String zoneID) {
 
-        return this.data.get(zoneID);
+        try {
+            byte[] bytes = this.data.get(zoneID);
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
+            return (TransitionHistory) ois.readObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null;
 
     }
 
@@ -329,16 +346,16 @@ public class TimezoneRepositoryProviderSPI
     }
 
     private static void checkMagicLabel(
-        ObjectInputStream ois,
+        DataInputStream dis,
         String location
     ) throws IOException {
 
-        int b1 = ois.readByte();
-        int b2 = ois.readByte();
-        int b3 = ois.readByte();
-        int b4 = ois.readByte();
-        int b5 = ois.readByte();
-        int b6 = ois.readByte();
+        int b1 = dis.readByte();
+        int b2 = dis.readByte();
+        int b3 = dis.readByte();
+        int b4 = dis.readByte();
+        int b5 = dis.readByte();
+        int b6 = dis.readByte();
 
         if (
             (b1 != 't')
