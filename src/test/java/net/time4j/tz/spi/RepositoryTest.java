@@ -1,10 +1,11 @@
-package net.time4j.tz.repository;
+package net.time4j.tz.spi;
 
 import net.time4j.Moment;
 import net.time4j.PlainTimestamp;
 import net.time4j.format.expert.ChronoFormatter;
 import net.time4j.format.expert.Iso8601Format;
 import net.time4j.format.expert.PatternType;
+import net.time4j.tz.TransitionHistory;
 import net.time4j.tz.ZonalTransition;
 import net.time4j.tz.ZoneProvider;
 import org.junit.After;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 
@@ -35,6 +37,7 @@ public class RepositoryTest {
         String propertyKey = "net.time4j.tz.repository.version";
         this.propertyValue = System.getProperty(propertyKey);
         System.setProperty(propertyKey, "2012c");
+        System.setProperty("test.environment", "true");
     }
 
     @After
@@ -52,6 +55,14 @@ public class RepositoryTest {
         TimezoneRepositoryProviderSPI p =
             new TimezoneRepositoryProviderSPI();
         assertThat(p.getVersion(), is("2012c"));
+    }
+
+    @Test
+    public void loadAll() {
+        ZoneProvider repo = new TimezoneRepositoryProviderSPI();
+        for (String tzid : repo.getAvailableIDs()) {
+            assertThat(repo.load(tzid), notNullValue());
+        }
     }
 
     @Test
@@ -150,8 +161,10 @@ public class RepositoryTest {
         int start = 1850;
         int end = 1942;
         ZoneProvider repo = new TimezoneRepositoryProviderSPI();
+        TransitionHistory history = repo.load(zoneID);
+        assertThat(history, notNullValue());
         List<ZonalTransition> transitions =
-            repo.load(zoneID).getTransitions(
+            history.getTransitions(
                 atStartOfYear(start),
                 atStartOfYear(end + 1));
         int n = transitions.size();
@@ -534,8 +547,10 @@ public class RepositoryTest {
 //        } catch (IOException ex) {
 //            // cannot happen
 //        }
+        TransitionHistory history = repo.load(zoneID);
+        assertThat(history, notNullValue());
         List<ZonalTransition> transitions =
-            repo.load(zoneID).getTransitions(
+            history.getTransitions(
                 atStartOfYear(start),
                 atStartOfYear(end + 1));
         int n = transitions.size();

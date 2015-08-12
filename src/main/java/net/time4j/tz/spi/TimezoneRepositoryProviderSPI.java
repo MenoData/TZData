@@ -19,26 +19,26 @@
  * -----------------------------------------------------------------------
  */
 
-package net.time4j.tz.repository;
+package net.time4j.tz.spi;
 
 import net.time4j.PlainDate;
 import net.time4j.base.GregorianDate;
+import net.time4j.base.ResourceLoader;
 import net.time4j.scale.LeapSecondProvider;
-import net.time4j.tz.ExtZoneProvider;
 import net.time4j.tz.NameStyle;
 import net.time4j.tz.Timezone;
 import net.time4j.tz.TransitionHistory;
 import net.time4j.tz.ZoneProvider;
-import net.time4j.tz.spi.ZoneNameProviderSPI;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,7 +59,7 @@ import java.util.TimeZone;
  * @since   1.0
  */
 public class TimezoneRepositoryProviderSPI
-    implements ExtZoneProvider, LeapSecondProvider {
+    implements ZoneProvider, LeapSecondProvider {
 
     //~ Statische Felder/Initialisierungen --------------------------------
 
@@ -67,15 +67,11 @@ public class TimezoneRepositoryProviderSPI
 
     static {
         Set<String> jdkNameRefs = new HashSet<String>();
-
-        for (String key : TimeZone.getAvailableIDs()) {
-            jdkNameRefs.add(key);
-        }
-
+        Collections.addAll(jdkNameRefs, TimeZone.getAvailableIDs());
         JDK_NAME_REFS = Collections.unmodifiableSet(jdkNameRefs);
     }
 
-    private static final ExtZoneProvider NAME_PROVIDER = new ZoneNameProviderSPI();
+    private static final ZoneProvider NAME_PROVIDER = new ZoneNameProviderSPI();
 
     //~ Instanzvariablen --------------------------------------------------
 
@@ -91,7 +87,7 @@ public class TimezoneRepositoryProviderSPI
     public TimezoneRepositoryProviderSPI() {
         super();
 
-        URL url = null;
+        URI uri = null;
         InputStream is = null;
         DataInputStream dis = null;
 
@@ -123,45 +119,50 @@ public class TimezoneRepositoryProviderSPI
         }
 
         try {
-            if (repositoryPath != null) {
-                File path = new File(repositoryPath, file);
+            String path = null;
 
-                if (path.isAbsolute()) {
-                    if (path.exists()) {
-                        url = path.toURI().toURL();
+            if (repositoryPath != null) {
+                File f = new File(repositoryPath, file);
+
+                if (f.isAbsolute()) {
+                    if (f.exists()) {
+                        uri = f.toURI();
                     } else {
                         throw new FileNotFoundException(
-                            "Path to tz-repository not found: " + path);
+                            "Path to tz-repository not found: " + f);
                     }
                 } else {
-                    String internalResource = path.toString();
-                    url = classLoader().getResource(internalResource);
+                    path = f.toString();
+                    uri = ResourceLoader.getInstance().locate("tzdata", getReference(), path);
                 }
             } else {
-                String internalResource = "tzrepo/" + file;
-                url = classLoader().getResource(internalResource);
+                path = "tzrepo/" + file;
+                uri = ResourceLoader.getInstance().locate("tzdata", getReference(), path);
             }
 
-            if (url != null) {
-                is = url.openStream();
+            if (uri != null) {
+                is = ResourceLoader.getInstance().load(uri, true);
                 dis = new DataInputStream(is);
-                tmpLocation = url.toString();
+                tmpLocation = uri.toString();
                 checkMagicLabel(dis, tmpLocation);
                 String v = dis.readUTF();
                 int sizeOfZones = dis.readInt();
 
-                List<String> zones = new ArrayList<String>();
+                List<String> zones = new ArrayList<String>(sizeOfZones);
 
                 for (int i = 0; i < sizeOfZones; i++) {
                     String zoneID = dis.readUTF();
                     int dataLen = dis.readInt();
                     byte[] dataBuf = new byte[dataLen];
-                    int dataRead = dis.read(dataBuf, 0, dataLen);
-                    if (dataLen > dataRead) {
-                        byte[] tmpBuf = new byte[dataRead];
-                        System.arraycopy(dataBuf, 0, tmpBuf, 0, dataRead);
-                        dataBuf = tmpBuf;
-                    }
+                    int dataRead = 0;
+
+                    do {
+                        dataRead += dis.read(dataBuf, dataRead, dataLen - dataRead);
+                        if (dataRead == -1) {
+                            throw new EOFException("Incomplete data: " + zoneID);
+                        }
+                    } while (dataLen > dataRead);
+
                     zones.add(zoneID);
                     tmpData.put(zoneID, dataBuf);
                 }
@@ -198,8 +199,8 @@ public class TimezoneRepositoryProviderSPI
             }
 
         } catch (IOException ioe) {
-            System.out.println(
-                "Note: TZ-repository not available. => " + ioe.getMessage());
+            System.out.println("Warning: TZ-repository not available. => " + ioe.getMessage());
+            ioe.printStackTrace(System.err);
         } finally {
             if (is != null) {
                 try {
@@ -266,8 +267,10 @@ public class TimezoneRepositoryProviderSPI
 
         try {
             byte[] bytes = this.data.get(zoneID);
-            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
-            return (TransitionHistory) ois.readObject();
+            if (bytes != null) {
+                ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
+                return (TransitionHistory) ois.readObject();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -370,19 +373,17 @@ public class TimezoneRepositoryProviderSPI
 
     }
 
-    private static ClassLoader classLoader() {
+    private static Class<?> getReference() {
 
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-
-        if (cl == null) {
-            cl = ZoneProvider.class.getClassLoader();
+        if (Boolean.getBoolean("test.environment")) {
+            try {
+                return Class.forName("net.time4j.tz.spi.RepositoryTest");
+            } catch (ClassNotFoundException e) {
+                throw new AssertionError(e);
+            }
         }
 
-        if (cl == null) {
-            cl = ClassLoader.getSystemClassLoader();
-        }
-
-        return cl;
+        return TimezoneRepositoryProviderSPI.class;
 
     }
 

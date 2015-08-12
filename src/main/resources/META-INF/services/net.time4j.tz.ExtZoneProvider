@@ -1,4 +1,0 @@
-net.time4j.tz.spi.ZoneNameProviderSPI
-net.time4j.tz.spi.WinZoneProviderSPI
-net.time4j.tz.spi.MilZoneProviderSPI
-net.time4j.tz.repository.TimezoneRepositoryProviderSPI

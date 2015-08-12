@@ -7,4 +7,4 @@
  * <p>Kapselt die Zeitzonendatenbank von Time4J basierend auf der
  * TZDB-Datenbank von IANA. </p>
  */
-package net.time4j.tz.repository;
+package net.time4j.tz.spi;
