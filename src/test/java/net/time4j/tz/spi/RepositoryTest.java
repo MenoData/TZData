@@ -59,7 +59,7 @@ public class RepositoryTest {
 
     @Test
     public void loadAll() {
-        String version = "2016c";
+        String version = "2016d";
         use(version);
         ZoneProvider repo = new TimezoneRepositoryProviderSPI();
         assertThat(repo.getVersion(), is(version));
