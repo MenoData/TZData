@@ -5,9 +5,13 @@ import net.time4j.PlainTimestamp;
 import net.time4j.format.expert.ChronoFormatter;
 import net.time4j.format.expert.Iso8601Format;
 import net.time4j.format.expert.PatternType;
+import net.time4j.tz.OffsetSign;
+import net.time4j.tz.Timezone;
 import net.time4j.tz.TransitionHistory;
+import net.time4j.tz.ZonalOffset;
 import net.time4j.tz.ZonalTransition;
-import net.time4j.tz.ZoneProvider;
+import net.time4j.tz.ZoneModelProvider;
+import net.time4j.tz.olson.AMERICA;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +40,7 @@ public class RepositoryTest {
     public void setUp() {
         String propertyKey = "net.time4j.tz.repository.version";
         this.propertyValue = System.getProperty(propertyKey);
-        System.setProperty(propertyKey, "2012c");
+        System.setProperty(propertyKey, "2016e");
         System.setProperty("test.environment", "true");
     }
 
@@ -51,17 +55,35 @@ public class RepositoryTest {
     }
 
     @Test
-    public void findRepository2012c() throws IOException {
+    public void southAmerica() throws IOException {
+        System.out.println(Timezone.getVersion("TZDB"));
+        Timezone.of(AMERICA.SANTIAGO).dump(System.out);
+        Timezone.of(AMERICA.ARGENTINA.CATAMARCA).dump(System.out);
+    }
+
+    @Test
+    public void alias() throws ParseException {
+        ChronoFormatter<Moment> f =
+            ChronoFormatter.ofMomentPattern(
+                "uuuu-MM-dd HH:mm:ss VV", PatternType.CLDR, Locale.ROOT, ZonalOffset.UTC);
+        Moment m = f.parse("2016-07-01 00:00:00 Asia/Calcutta");
+        assertThat(
+            m,
+            is(PlainTimestamp.of(2016, 7, 1, 0, 0).at(ZonalOffset.ofHoursMinutes(OffsetSign.AHEAD_OF_UTC, 5, 30))));
+    }
+
+    @Test
+    public void findRepository2016e() throws IOException {
         TimezoneRepositoryProviderSPI p =
             new TimezoneRepositoryProviderSPI();
-        assertThat(p.getVersion(), is("2012c"));
+        assertThat(p.getVersion(), is("2016e"));
     }
 
     @Test
     public void loadAll() {
-        String version = "2016d";
+        String version = "2016e";
         use(version);
-        ZoneProvider repo = new TimezoneRepositoryProviderSPI();
+        ZoneModelProvider repo = new TimezoneRepositoryProviderSPI();
         assertThat(repo.getVersion(), is(version));
         for (String tzid : repo.getAvailableIDs()) {
             assertThat(repo.load(tzid), notNullValue());
@@ -163,7 +185,7 @@ public class RepositoryTest {
         String zoneID = "America/Juneau";
         int start = 1850;
         int end = 1942;
-        ZoneProvider repo = new TimezoneRepositoryProviderSPI();
+        ZoneModelProvider repo = new TimezoneRepositoryProviderSPI();
         TransitionHistory history = repo.load(zoneID);
         assertThat(history, notNullValue());
         List<ZonalTransition> transitions =
@@ -544,7 +566,7 @@ public class RepositoryTest {
         Object[][] data,
         boolean minutes
     ) throws ParseException {
-        ZoneProvider repo = new TimezoneRepositoryProviderSPI();
+        ZoneModelProvider repo = new TimezoneRepositoryProviderSPI();
 //        try {
 //            repo.load(zoneID).dump(System.out);
 //        } catch (IOException ex) {

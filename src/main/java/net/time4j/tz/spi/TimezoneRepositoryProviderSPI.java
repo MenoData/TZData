@@ -27,6 +27,8 @@ import net.time4j.base.ResourceLoader;
 import net.time4j.scale.LeapSecondProvider;
 import net.time4j.tz.NameStyle;
 import net.time4j.tz.TransitionHistory;
+import net.time4j.tz.ZoneModelProvider;
+import net.time4j.tz.ZoneNameProvider;
 import net.time4j.tz.ZoneProvider;
 
 import java.io.ByteArrayInputStream;
@@ -58,11 +60,11 @@ import java.util.Set;
  * @since   1.0
  */
 public class TimezoneRepositoryProviderSPI
-    implements ZoneProvider, LeapSecondProvider {
+    implements ZoneProvider, ZoneModelProvider, LeapSecondProvider {
 
     //~ Statische Felder/Initialisierungen --------------------------------
 
-    private static final ZoneProvider NAME_PROVIDER = new ZoneNameProviderSPI();
+    private static final ZoneNameProvider NAME_PROVIDER = new ZoneNameProviderSPI();
 
     //~ Instanzvariablen --------------------------------------------------
 
@@ -306,6 +308,13 @@ public class TimezoneRepositoryProviderSPI
     public String getVersion() {
 
         return this.version;
+
+    }
+
+    @Override
+    public ZoneNameProvider getSpecificZoneNameRepository() {
+
+        return null;
 
     }
 
