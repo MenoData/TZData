@@ -11,7 +11,6 @@ import net.time4j.tz.TransitionHistory;
 import net.time4j.tz.ZonalOffset;
 import net.time4j.tz.ZonalTransition;
 import net.time4j.tz.ZoneModelProvider;
-import net.time4j.tz.olson.AMERICA;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,8 +30,8 @@ import static org.junit.Assert.assertThat;
 @RunWith(JUnit4.class)
 public class RepositoryTest {
 
-    private static final ChronoFormatter<Moment> PARSER =
-        Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
+    private static final String STD_VERSION = "2016f";
+    private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
 
@@ -40,7 +39,7 @@ public class RepositoryTest {
     public void setUp() {
         String propertyKey = "net.time4j.tz.repository.version";
         this.propertyValue = System.getProperty(propertyKey);
-        System.setProperty(propertyKey, "2016e");
+        System.setProperty(propertyKey, STD_VERSION);
         System.setProperty("test.environment", "true");
     }
 
@@ -55,13 +54,6 @@ public class RepositoryTest {
     }
 
     @Test
-    public void southAmerica() throws IOException {
-        System.out.println(Timezone.getVersion("TZDB"));
-        Timezone.of(AMERICA.SANTIAGO).dump(System.out);
-        Timezone.of(AMERICA.ARGENTINA.CATAMARCA).dump(System.out);
-    }
-
-    @Test
     public void alias() throws ParseException {
         ChronoFormatter<Moment> f =
             ChronoFormatter.ofMomentPattern(
@@ -73,21 +65,27 @@ public class RepositoryTest {
     }
 
     @Test
-    public void findRepository2016e() throws IOException {
-        TimezoneRepositoryProviderSPI p =
-            new TimezoneRepositoryProviderSPI();
-        assertThat(p.getVersion(), is("2016e"));
+    public void findRepositoryStdVersion() throws IOException {
+        assertThat(Timezone.getVersion("TZDB"), is(STD_VERSION));
     }
 
     @Test
     public void loadAll() {
+        ZoneModelProvider repo = new TimezoneRepositoryProviderSPI();
+        assertThat(repo.getVersion(), is(STD_VERSION));
+        for (String tzid : repo.getAvailableIDs()) {
+            assertThat(repo.load(tzid), notNullValue());
+        }
+    }
+
+    @Test
+    public void tzAfricaCairo() throws IOException {
         String version = "2016e";
         use(version);
         ZoneModelProvider repo = new TimezoneRepositoryProviderSPI();
         assertThat(repo.getVersion(), is(version));
-        for (String tzid : repo.getAvailableIDs()) {
-            assertThat(repo.load(tzid), notNullValue());
-        }
+        System.out.println("Africa/Cairo => " + version);
+        repo.load("Africa/Cairo").dump(System.out);
     }
 
     @Test
