@@ -1,16 +1,20 @@
 package net.time4j.tz.spi;
 
 import net.time4j.Moment;
+import net.time4j.PlainDate;
 import net.time4j.PlainTimestamp;
 import net.time4j.format.expert.ChronoFormatter;
 import net.time4j.format.expert.Iso8601Format;
 import net.time4j.format.expert.PatternType;
+import net.time4j.scale.LeapSecondProvider;
 import net.time4j.tz.OffsetSign;
 import net.time4j.tz.Timezone;
 import net.time4j.tz.TransitionHistory;
 import net.time4j.tz.ZonalOffset;
 import net.time4j.tz.ZonalTransition;
 import net.time4j.tz.ZoneModelProvider;
+import net.time4j.tz.olson.ASIA;
+import net.time4j.tz.olson.EUROPE;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +34,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(JUnit4.class)
 public class RepositoryTest {
 
-    private static final String STD_VERSION = "2016f";
+    private static final String STD_VERSION = "2016g";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -67,6 +71,7 @@ public class RepositoryTest {
     @Test
     public void findRepositoryStdVersion() throws IOException {
         assertThat(Timezone.getVersion("TZDB"), is(STD_VERSION));
+        Timezone.of("Europe/Zurich").dump(System.out);
     }
 
     @Test
@@ -546,6 +551,36 @@ public class RepositoryTest {
             {"1945-10-15T00:00+06:30", indiaDST, india, 0},
         };
         checkTransitions(zoneID, start, end, data, true);
+    }
+
+    @Test
+    public void tzEuropeIstanbul() throws ParseException, IOException {
+        use("2016g");
+        Moment moment = PlainTimestamp.of(2016, 9, 6, 21, 0, 1).atUTC();
+        ZonalTransition zt =
+            Timezone.of(EUROPE.ISTANBUL).getHistory().findStartTransition(
+            moment
+        ).get();
+        assertThat(zt.getPosixTime(), is(moment.getPosixTime() - 1));
+        assertThat(zt.getPreviousOffset(), is(10800));
+        assertThat(zt.getTotalOffset(), is(10800));
+        assertThat(zt.getDaylightSavingOffset(), is(0));
+        Timezone.of(EUROPE.ISTANBUL).dump(System.out);
+    }
+
+    @Test
+    public void leapSecondAtEndOf2016() {
+        use("2016g");
+        LeapSecondProvider repo = new TimezoneRepositoryProviderSPI();
+        assertThat(
+            repo.getLeapSecondTable().size(),
+            is(27));
+        assertThat(
+            repo.getDateOfExpiration().toString(),
+            is("2017-06-28"));
+        assertThat(
+            repo.getLeapSecondTable().get(PlainDate.of(2016, 12, 31)).intValue(),
+            is(1));
     }
 
     private static void checkTransitions(
