@@ -13,7 +13,6 @@ import net.time4j.tz.TransitionHistory;
 import net.time4j.tz.ZonalOffset;
 import net.time4j.tz.ZonalTransition;
 import net.time4j.tz.ZoneModelProvider;
-import net.time4j.tz.olson.ASIA;
 import net.time4j.tz.olson.EUROPE;
 import org.junit.After;
 import org.junit.Before;
@@ -34,7 +33,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(JUnit4.class)
 public class RepositoryTest {
 
-    private static final String STD_VERSION = "2016g";
+    private static final String STD_VERSION = "2016h";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -85,7 +84,7 @@ public class RepositoryTest {
 
     @Test
     public void tzAfricaCairo() throws IOException {
-        String version = "2016e";
+        String version = "2016h";
         use(version);
         ZoneModelProvider repo = new TimezoneRepositoryProviderSPI();
         assertThat(repo.getVersion(), is(version));
@@ -570,7 +569,7 @@ public class RepositoryTest {
 
     @Test
     public void leapSecondAtEndOf2016() {
-        use("2016g");
+        use("2016h");
         LeapSecondProvider repo = new TimezoneRepositoryProviderSPI();
         assertThat(
             repo.getLeapSecondTable().size(),
