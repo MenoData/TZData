@@ -33,7 +33,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(JUnit4.class)
 public class RepositoryTest {
 
-    private static final String STD_VERSION = "2016h";
+    private static final String STD_VERSION = "2016i";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -70,7 +70,7 @@ public class RepositoryTest {
     @Test
     public void findRepositoryStdVersion() throws IOException {
         assertThat(Timezone.getVersion("TZDB"), is(STD_VERSION));
-        Timezone.of("Europe/Zurich").dump(System.out);
+        Timezone.of("Pacific/Tongatapu").dump(System.out);
     }
 
     @Test
