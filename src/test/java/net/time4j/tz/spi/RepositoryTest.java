@@ -33,7 +33,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(JUnit4.class)
 public class RepositoryTest {
 
-    private static final String STD_VERSION = "2016i";
+    private static final String STD_VERSION = "2016j";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -565,6 +565,20 @@ public class RepositoryTest {
         assertThat(zt.getTotalOffset(), is(10800));
         assertThat(zt.getDaylightSavingOffset(), is(0));
         Timezone.of(EUROPE.ISTANBUL).dump(System.out);
+    }
+
+    @Test
+    public void tzEuropeSaratov() throws ParseException, IOException {
+        use("2016j");
+        Moment moment = PlainTimestamp.of(2016, 12, 3, 23, 0, 1).atUTC();
+        ZonalTransition zt =
+            Timezone.of("Europe/Saratov").getHistory().findStartTransition(
+                moment
+            ).get();
+        assertThat(zt.getPosixTime(), is(moment.getPosixTime() - 1));
+        assertThat(zt.getPreviousOffset(), is(10800));
+        assertThat(zt.getTotalOffset(), is(14400));
+        assertThat(zt.getDaylightSavingOffset(), is(0));
     }
 
     @Test
