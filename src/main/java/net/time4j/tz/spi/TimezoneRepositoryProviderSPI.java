@@ -1,6 +1,6 @@
 /*
  * -----------------------------------------------------------------------
- * Copyright © 2013-2016 Meno Hochschild, <http://www.menodata.de/>
+ * Copyright © 2013-2018 Meno Hochschild, <http://www.menodata.de/>
  * -----------------------------------------------------------------------
  * This file (TimezoneRepositoryProviderSPI.java) is part of project Time4J.
  *
@@ -29,7 +29,6 @@ import net.time4j.tz.NameStyle;
 import net.time4j.tz.TransitionHistory;
 import net.time4j.tz.ZoneModelProvider;
 import net.time4j.tz.ZoneNameProvider;
-import net.time4j.tz.ZoneProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -54,13 +53,13 @@ import java.util.Set;
 
 /**
  * <p>Reads timezone repository-files compiled by the class
- * {@code net.time4j.tool.TimezoneRepositoryCompiler}. </p>
+ * {@code net.time4j.tool.TimezoneRepositoryCompiler (v2.0)}. </p>
  *
  * @author  Meno Hochschild
  * @since   1.0
  */
 public class TimezoneRepositoryProviderSPI
-    implements ZoneProvider, ZoneModelProvider, LeapSecondProvider {
+    implements ZoneModelProvider, ZoneNameProvider, LeapSecondProvider {
 
     //~ Statische Felder/Initialisierungen --------------------------------
 

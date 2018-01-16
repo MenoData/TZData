@@ -33,7 +33,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(JUnit4.class)
 public class RepositoryTest {
 
-    private static final String STD_VERSION = "2017b";
+    private static final String STD_VERSION = "2018a";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -105,6 +105,24 @@ public class RepositoryTest {
             {"2015-10-25T03:00+01:00", 1, 0, 0},
         };
         checkTransitions(zoneID, start, end, data);
+    }
+
+    @Test
+    public void tzAfricaSudan() throws ParseException {
+        use("2017c"); // splitting of zones Africa/Khartoum and Africa/Juba
+        String zoneID1 = "Africa/Khartoum";
+        String zoneID2 = "Africa/Juba";
+        int start = 2000;
+        int end = 2017;
+        Object[][] data1 = {
+            {"2000-01-15T12:00+02:00", 2, 3, 0},
+            {"2017-11-01T00:00+03:00", 3, 2, 0},
+        };
+        Object[][] data2 = {
+            {"2000-01-15T12:00+02:00", 2, 3, 0},
+        };
+        checkTransitions(zoneID1, start, end, data1);
+        checkTransitions(zoneID2, start, end, data2);
     }
 
     @Test
@@ -579,6 +597,26 @@ public class RepositoryTest {
         assertThat(zt.getPreviousOffset(), is(10800));
         assertThat(zt.getTotalOffset(), is(14400));
         assertThat(zt.getDaylightSavingOffset(), is(0));
+    }
+
+    @Test
+    public void tzEuropeDublin() throws ParseException, IOException {
+        use("2018a");
+        Timezone tz = Timezone.of("Europe/Dublin");
+
+        Moment winter = PlainTimestamp.of(2018, 1, 16, 0, 0).atUTC();
+        assertThat(tz.getStandardOffset(winter).getIntegralAmount(), is(3600));
+        assertThat(tz.getDaylightSavingOffset(winter).getIntegralAmount(), is(-3600));
+        assertThat(tz.getOffset(winter).getIntegralAmount(), is(0));
+        assertThat(tz.isDaylightSaving(winter), is(false));
+
+        Moment summer = PlainTimestamp.of(2018, 7, 16, 0, 0).atUTC();
+        assertThat(tz.getStandardOffset(summer).getIntegralAmount(), is(3600));
+        assertThat(tz.getDaylightSavingOffset(summer).getIntegralAmount(), is(0));
+        assertThat(tz.getOffset(summer).getIntegralAmount(), is(3600));
+        assertThat(tz.isDaylightSaving(summer), is(true));
+
+        // tz.dump(System.out);
     }
 
     @Test
