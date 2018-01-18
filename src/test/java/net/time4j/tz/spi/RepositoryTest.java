@@ -33,7 +33,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(JUnit4.class)
 public class RepositoryTest {
 
-    private static final String STD_VERSION = "2018a";
+    private static final String STD_VERSION = "2018b";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -621,14 +621,14 @@ public class RepositoryTest {
 
     @Test
     public void leapSecondAtEndOf2016() {
-        use("2016h");
+        use("2018b");
         LeapSecondProvider repo = new TimezoneRepositoryProviderSPI();
         assertThat(
             repo.getLeapSecondTable().size(),
             is(27));
         assertThat(
             repo.getDateOfExpiration().toString(),
-            is("2017-06-28"));
+            is("2018-12-28"));
         assertThat(
             repo.getLeapSecondTable().get(PlainDate.of(2016, 12, 31)).intValue(),
             is(1));
