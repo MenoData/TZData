@@ -616,6 +616,12 @@ public class RepositoryTest {
         assertThat(tz.getOffset(summer).getIntegralAmount(), is(3600));
         assertThat(tz.isDaylightSaving(summer), is(true));
 
+        Moment m1970 = Moment.UNIX_EPOCH;
+        assertThat(tz.getStandardOffset(m1970).getIntegralAmount(), is(3600));
+        assertThat(tz.getDaylightSavingOffset(m1970).getIntegralAmount(), is(0));
+        assertThat(tz.getOffset(m1970).getIntegralAmount(), is(3600));
+        assertThat(tz.isDaylightSaving(m1970), is(true));
+
         // tz.dump(System.out);
     }
 
