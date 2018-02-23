@@ -640,6 +640,11 @@ public class RepositoryTest {
             is(1));
     }
 
+    @Test
+    public void tzAsiaYangon() throws IOException {
+        Timezone.of("Asia/Yangon").dump(System.out); // fine in tzdb 2018b
+    }
+
     private static void checkTransitions(
         String zoneID,
         int start,
