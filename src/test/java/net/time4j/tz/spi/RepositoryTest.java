@@ -571,7 +571,7 @@ public class RepositoryTest {
     }
 
     @Test
-    public void tzEuropeIstanbul() throws ParseException, IOException {
+    public void tzEuropeIstanbul() throws IOException {
         use("2016g");
         Moment moment = PlainTimestamp.of(2016, 9, 6, 21, 0, 1).atUTC();
         ZonalTransition zt =
@@ -586,7 +586,7 @@ public class RepositoryTest {
     }
 
     @Test
-    public void tzEuropeSaratov() throws ParseException, IOException {
+    public void tzEuropeSaratov() {
         use("2016j");
         Moment moment = PlainTimestamp.of(2016, 12, 3, 23, 0, 1).atUTC();
         ZonalTransition zt =
@@ -600,7 +600,7 @@ public class RepositoryTest {
     }
 
     @Test
-    public void tzEuropeDublin() throws ParseException, IOException {
+    public void tzEuropeDublin() {
         use("2018a");
         Timezone tz = Timezone.of("Europe/Dublin");
 
@@ -643,6 +643,22 @@ public class RepositoryTest {
     @Test
     public void tzAsiaYangon() throws IOException {
         Timezone.of("Asia/Yangon").dump(System.out); // fine in tzdb 2018b
+    }
+
+    @Test
+    public void normalize() {
+        assertThat(
+            Timezone.normalize("Asia/Calcutta").canonical(),
+            is("Asia/Kolkata"));
+        assertThat(
+            Timezone.normalize("Asia/Rangoon").canonical(),
+            is("Asia/Yangon"));
+        assertThat(
+            Timezone.normalize("Asia/Tel_Aviv").canonical(),
+            is("Asia/Jerusalem"));
+        assertThat(
+            Timezone.normalize("America/Mendoza").canonical(),
+            is("America/Argentina/Mendoza"));
     }
 
     private static void checkTransitions(
