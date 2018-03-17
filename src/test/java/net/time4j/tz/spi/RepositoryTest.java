@@ -651,13 +651,25 @@ public class RepositoryTest {
             Timezone.normalize("Asia/Calcutta").canonical(),
             is("Asia/Kolkata"));
         assertThat(
+            Timezone.normalize("Asia/Kolkata").canonical(),
+            is("Asia/Kolkata"));
+        assertThat(
             Timezone.normalize("Asia/Rangoon").canonical(),
+            is("Asia/Yangon"));
+        assertThat(
+            Timezone.normalize("Asia/Yangon").canonical(),
             is("Asia/Yangon"));
         assertThat(
             Timezone.normalize("Asia/Tel_Aviv").canonical(),
             is("Asia/Jerusalem"));
         assertThat(
+            Timezone.normalize("Asia/Jerusalem").canonical(),
+            is("Asia/Jerusalem"));
+        assertThat(
             Timezone.normalize("America/Mendoza").canonical(),
+            is("America/Argentina/Mendoza"));
+        assertThat(
+            Timezone.normalize("America/Argentina/Mendoza").canonical(),
             is("America/Argentina/Mendoza"));
     }
 
