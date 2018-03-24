@@ -33,7 +33,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(JUnit4.class)
 public class RepositoryTest {
 
-    private static final String STD_VERSION = "2018b";
+    private static final String STD_VERSION = "2018d";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -600,8 +600,8 @@ public class RepositoryTest {
     }
 
     @Test
-    public void tzEuropeDublin() {
-        use("2018a");
+    public void tzEuropeDublin() throws IOException {
+        use("2018d");
         Timezone tz = Timezone.of("Europe/Dublin");
 
         Moment winter = PlainTimestamp.of(2018, 1, 16, 0, 0).atUTC();
@@ -622,7 +622,7 @@ public class RepositoryTest {
         assertThat(tz.getOffset(m1970).getIntegralAmount(), is(3600));
         assertThat(tz.isDaylightSaving(m1970), is(true));
 
-        // tz.dump(System.out);
+        tz.dump(System.out);
     }
 
     @Test

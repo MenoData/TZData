@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.time4j</groupId>
     <artifactId>time4j-tzdata</artifactId>
-    <version>2.2-2018b</version>
+    <version>2.2-2018d</version>
     <packaging>jar</packaging>
     <name>Time4J-TZDATA</name>
-    
+
     <description>TZ-Repository for Time4J</description>
     <url>http://www.time4j.net</url>
     
