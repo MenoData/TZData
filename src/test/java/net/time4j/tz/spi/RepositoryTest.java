@@ -33,7 +33,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(JUnit4.class)
 public class RepositoryTest {
 
-    private static final String STD_VERSION = "2018d";
+    private static final String STD_VERSION = "2018e";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -572,7 +572,6 @@ public class RepositoryTest {
 
     @Test
     public void tzEuropeIstanbul() throws IOException {
-        use("2016g");
         Moment moment = PlainTimestamp.of(2016, 9, 6, 21, 0, 1).atUTC();
         ZonalTransition zt =
             Timezone.of(EUROPE.ISTANBUL).getHistory().findStartTransition(
@@ -587,7 +586,6 @@ public class RepositoryTest {
 
     @Test
     public void tzEuropeSaratov() {
-        use("2016j");
         Moment moment = PlainTimestamp.of(2016, 12, 3, 23, 0, 1).atUTC();
         ZonalTransition zt =
             Timezone.of("Europe/Saratov").getHistory().findStartTransition(
@@ -601,7 +599,6 @@ public class RepositoryTest {
 
     @Test
     public void tzEuropeDublin() throws IOException {
-        use("2018d");
         Timezone tz = Timezone.of("Europe/Dublin");
 
         Moment winter = PlainTimestamp.of(2018, 1, 16, 0, 0).atUTC();
@@ -627,7 +624,7 @@ public class RepositoryTest {
 
     @Test
     public void leapSecondAtEndOf2016() {
-        use("2018b");
+        use("2018e");
         LeapSecondProvider repo = new TimezoneRepositoryProviderSPI();
         assertThat(
             repo.getLeapSecondTable().size(),
@@ -643,6 +640,22 @@ public class RepositoryTest {
     @Test
     public void tzAsiaYangon() throws IOException {
         Timezone.of("Asia/Yangon").dump(System.out); // fine in tzdb 2018b
+    }
+
+    @Test
+    public void tzEuropePrague() throws ParseException {
+        use("2018e");
+        String zoneID = "Europe/Prague";
+        int start = 1946;
+        int end = 1947;
+        Object[][] data = {
+            {"1946-05-06T01:00:00Z", 1, 2, 1},
+            {"1946-10-06T01:00:00Z", 2, 1, 0},
+            {"1946-12-01T02:00:00Z", 1, 0, -1},
+            {"1947-04-20T01:00:00Z", 0, 2, 1},
+            {"1947-10-05T01:00:00Z", 2, 1, 0},
+        };
+        checkTransitions(zoneID, start, end, data);
     }
 
     @Test
