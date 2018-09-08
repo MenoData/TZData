@@ -1,4 +1,4 @@
-package net.time4j.tz.spi;
+package net.time4j.tz.repo;
 
 import net.time4j.Moment;
 import net.time4j.PlainDate;
@@ -32,6 +32,10 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(JUnit4.class)
 public class RepositoryTest {
+
+    static {
+        TZDATA.init();
+    }
 
     private static final String STD_VERSION = "2018e";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;

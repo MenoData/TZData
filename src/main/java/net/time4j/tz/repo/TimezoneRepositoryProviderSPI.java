@@ -19,7 +19,7 @@
  * -----------------------------------------------------------------------
  */
 
-package net.time4j.tz.spi;
+package net.time4j.tz.repo;
 
 import net.time4j.PlainDate;
 import net.time4j.base.GregorianDate;
@@ -29,6 +29,7 @@ import net.time4j.tz.NameStyle;
 import net.time4j.tz.TransitionHistory;
 import net.time4j.tz.ZoneModelProvider;
 import net.time4j.tz.ZoneNameProvider;
+import net.time4j.tz.spi.ZoneNameProviderSPI;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -385,7 +386,7 @@ public class TimezoneRepositoryProviderSPI
 
         if (Boolean.getBoolean("test.environment")) {
             try {
-                return Class.forName("net.time4j.tz.spi.RepositoryTest");
+                return Class.forName("net.time4j.tz.repo.RepositoryTest");
             } catch (ClassNotFoundException e) {
                 throw new AssertionError(e);
             }

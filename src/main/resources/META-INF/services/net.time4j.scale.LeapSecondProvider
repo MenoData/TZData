@@ -1,1 +1,1 @@
-net.time4j.tz.spi.TimezoneRepositoryProviderSPI
+net.time4j.tz.repo.TimezoneRepositoryProviderSPI
