@@ -37,7 +37,7 @@ public class RepositoryTest {
         TZDATA.init();
     }
 
-    private static final String STD_VERSION = "2018e";
+    private static final String STD_VERSION = "2018f";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -628,14 +628,14 @@ public class RepositoryTest {
 
     @Test
     public void leapSecondAtEndOf2016() {
-        use("2018e");
+        use("2018f");
         LeapSecondProvider repo = new TimezoneRepositoryProviderSPI();
         assertThat(
             repo.getLeapSecondTable().size(),
             is(27));
         assertThat(
             repo.getDateOfExpiration().toString(),
-            is("2018-12-28"));
+            is("2019-06-28"));
         assertThat(
             repo.getLeapSecondTable().get(PlainDate.of(2016, 12, 31)).intValue(),
             is(1));
@@ -658,6 +658,19 @@ public class RepositoryTest {
             {"1946-12-01T02:00:00Z", 1, 0, -1},
             {"1947-04-20T01:00:00Z", 0, 2, 1},
             {"1947-10-05T01:00:00Z", 2, 1, 0},
+        };
+        checkTransitions(zoneID, start, end, data);
+    }
+
+    @Test
+    public void tzAsiaTokyo() throws ParseException, IOException {
+        use("2018f");
+        String zoneID = "Asia/Tokyo";
+        int start = 1950;
+        int end = 1950;
+        Object[][] data = {
+            {"1950-05-06T15:00:00Z", 9, 10, 1},
+            {"1950-09-09T15:00:00Z", 10, 9, 0},
         };
         checkTransitions(zoneID, start, end, data);
     }

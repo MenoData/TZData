@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.time4j</groupId>
     <artifactId>time4j-tzdata</artifactId>
-    <version>3.0-2018e</version>
+    <version>5.0-2018f</version>
     <packaging>jar</packaging>
     <name>Time4J-TZDATA</name>
 
@@ -69,8 +69,8 @@
                     <fork>true</fork>
                     <compilerVersion>${jdk.min.version}</compilerVersion>
                     <encoding>${project.build.sourceEncoding}</encoding>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <debug>true</debug>
@@ -225,14 +225,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jdk.min.version>1.6</jdk.min.version>
+        <jdk.min.version>1.8</jdk.min.version>
     </properties>
     
     <dependencies>
         <dependency>
             <groupId>net.time4j</groupId>
             <artifactId>time4j-base</artifactId>
-            <version>[4.99.0-beta]</version>
+            <version>5.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

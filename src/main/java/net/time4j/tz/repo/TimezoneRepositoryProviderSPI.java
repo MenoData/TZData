@@ -88,15 +88,15 @@ public class TimezoneRepositoryProviderSPI
         String tmpLocation = "";
         PlainDate tmpExpires = PlainDate.axis().getMinimum();
 
-        Map<String, byte[]> tmpData = new HashMap<String, byte[]>();
-        Map<String, String> tmpAliases = new HashMap<String, String>();
+        Map<String, byte[]> tmpData = new HashMap<>();
+        Map<String, String> tmpAliases = new HashMap<>();
 
         boolean noLeaps =
             (System.getProperty("net.time4j.scale.leapseconds.path") != null);
         if (noLeaps) {
             this.leapsecs = Collections.emptyMap();
         } else {
-            this.leapsecs = new LinkedHashMap<GregorianDate, Integer>(50);
+            this.leapsecs = new LinkedHashMap<>(50);
         }
 
         String repositoryPath =
@@ -154,7 +154,7 @@ public class TimezoneRepositoryProviderSPI
             String v = dis.readUTF();
             int sizeOfZones = dis.readInt();
 
-            List<String> zones = new ArrayList<String>(sizeOfZones);
+            List<String> zones = new ArrayList<>(sizeOfZones);
 
             for (int i = 0; i < sizeOfZones; i++) {
                 String zoneID = dis.readUTF();
@@ -273,9 +273,7 @@ public class TimezoneRepositoryProviderSPI
                 ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
                 return (TransitionHistory) ois.readObject();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
