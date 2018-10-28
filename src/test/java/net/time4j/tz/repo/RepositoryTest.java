@@ -37,7 +37,7 @@ public class RepositoryTest {
         TZDATA.init();
     }
 
-    private static final String STD_VERSION = "2018f";
+    private static final String STD_VERSION = "2018g";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -97,7 +97,7 @@ public class RepositoryTest {
     }
 
     @Test
-    public void tzAfricaCasablanca() throws ParseException {
+    public void tzAfricaCasablanca2015a() throws ParseException {
         use("2015a"); // this version with ramadan modification
         String zoneID = "Africa/Casablanca";
         int start = 2015;
@@ -109,6 +109,11 @@ public class RepositoryTest {
             {"2015-10-25T03:00+01:00", 1, 0, 0},
         };
         checkTransitions(zoneID, start, end, data);
+    }
+
+    @Test
+    public void tzAfricaCasablanca2018g() throws IOException {
+        Timezone.of("Africa/Casablanca").dump(System.out);
     }
 
     @Test
@@ -664,7 +669,7 @@ public class RepositoryTest {
 
     @Test
     public void tzAsiaTokyo() throws ParseException, IOException {
-        use("2018f");
+        use("2018g");
         String zoneID = "Asia/Tokyo";
         int start = 1950;
         int end = 1950;
