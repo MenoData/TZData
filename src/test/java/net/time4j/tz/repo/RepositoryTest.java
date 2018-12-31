@@ -37,7 +37,7 @@ public class RepositoryTest {
         TZDATA.init();
     }
 
-    private static final String STD_VERSION = "2018h";
+    private static final String STD_VERSION = "2018i";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -112,8 +112,16 @@ public class RepositoryTest {
     }
 
     @Test
-    public void tzAfricaCasablanca2018g() throws IOException {
-        Timezone.of("Africa/Casablanca").dump(System.out);
+    public void tzAfricaSaoTome2018i() throws IOException, ParseException {
+        use("2018i");
+        String zoneID = "Africa/Sao_Tome";
+        int start = 2018;
+        int end = 2019;
+        Object[][] data = {
+            {"2018-01-01T01:00+00:00", 0, 1, 0},
+            {"2019-01-01T02:00+01:00", 1, 0, 0},
+        };
+        checkTransitions(zoneID, start, end, data);
     }
 
     @Test
