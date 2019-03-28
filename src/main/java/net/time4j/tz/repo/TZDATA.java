@@ -1,6 +1,6 @@
 /*
  * -----------------------------------------------------------------------
- * Copyright © 2013-2018 Meno Hochschild, <http://www.menodata.de/>
+ * Copyright © 2013-2019 Meno Hochschild, <http://www.menodata.de/>
  * -----------------------------------------------------------------------
  * This file (TZDATA.java) is part of project Time4J.
  *
@@ -61,10 +61,11 @@ public final class TZDATA {
      * @see     ResourceLoader#registerService(Class, Object)
      */
     public static void init() {
+        ResourceLoader rl = ResourceLoader.getInstance();
         TimezoneRepositoryProviderSPI spi = new TimezoneRepositoryProviderSPI();
-        ResourceLoader.getInstance().registerService(ZoneModelProvider.class, spi);
-        ResourceLoader.getInstance().registerService(ZoneNameProvider.class, spi);
-        ResourceLoader.getInstance().registerService(LeapSecondProvider.class, spi);
+        rl.registerService(ZoneModelProvider.class, spi);
+        rl.registerService(ZoneNameProvider.class, spi);
+        rl.registerService(LeapSecondProvider.class, spi);
     }
 
 }
