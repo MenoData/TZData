@@ -37,7 +37,7 @@ public class RepositoryTest {
         TZDATA.init();
     }
 
-    private static final String STD_VERSION = "2019b";
+    private static final String STD_VERSION = "2019c";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -112,7 +112,7 @@ public class RepositoryTest {
     }
 
     @Test
-    public void tzAfricaSaoTome2018i() throws IOException, ParseException {
+    public void tzAfricaSaoTome2018i() throws ParseException {
         use("2018i");
         String zoneID = "Africa/Sao_Tome";
         int start = 2018;
@@ -174,15 +174,16 @@ public class RepositoryTest {
 
     @Test
     public void tzAmericaKentuckyLouisville() throws ParseException {
+        use("2019c");
         String zoneID = "America/Kentucky/Louisville";
         int start = 1942;
         int end = 1950;
         Object[][] data = {
             {"1942-02-09T02:00-06:00", -6, -5, 1},
             {"1945-09-30T02:00-05:00", -5, -6, 0},
-            {"1946-04-28T02:00-06:00", -6, -5, 1},
+            {"1946-04-28T00:01-06:00", -6, -5, 1},
             {"1946-06-02T02:00-05:00", -5, -6, 0},
-            {"1947-04-27T02:00-06:00", -6, -5, 1},
+            {"1950-04-30T02:00-06:00", -6, -5, 1},
             {"1950-09-24T02:00-05:00", -5, -6, 0}
         };
         checkTransitions(zoneID, start, end, data);
@@ -676,7 +677,7 @@ public class RepositoryTest {
     }
 
     @Test
-    public void tzAsiaTokyo() throws ParseException, IOException {
+    public void tzAsiaTokyo() throws ParseException {
         use("2018g");
         String zoneID = "Asia/Tokyo";
         int start = 1950;

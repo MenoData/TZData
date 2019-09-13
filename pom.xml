@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.time4j</groupId>
     <artifactId>time4j-tzdata</artifactId>
-    <version>5.0-2019b</version>
+    <version>5.0-2019c</version>
     <packaging>jar</packaging>
     <name>Time4J-TZDATA</name>
 
