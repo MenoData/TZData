@@ -27,7 +27,7 @@ import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 @RunWith(JUnit4.class)
@@ -37,7 +37,7 @@ public class RepositoryTest {
         TZDATA.init();
     }
 
-    private static final String STD_VERSION = "2020a";
+    private static final String STD_VERSION = "2020b";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -84,6 +84,19 @@ public class RepositoryTest {
         for (String tzid : repo.getAvailableIDs()) {
             assertThat(repo.load(tzid), notNullValue());
         }
+    }
+
+    @Test
+    public void tzAsiaAden() throws IOException {
+        String version = "2020a";
+        use(version);
+        ZoneModelProvider repo = new TimezoneRepositoryProviderSPI();
+        assertThat(repo.getVersion(), is(version));
+        System.out.println("Asia/Aden => " + version);
+        assertThat(
+            repo.getAliases().get("Asia/Aden"),
+            is("Asia/Riyadh"));
+        repo.load("Asia/Riyadh").dump(System.out);
     }
 
     @Test
