@@ -37,7 +37,7 @@ public class RepositoryTest {
         TZDATA.init();
     }
 
-    private static final String STD_VERSION = "2020b";
+    private static final String STD_VERSION = "2020c";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -74,7 +74,7 @@ public class RepositoryTest {
     @Test
     public void findRepositoryStdVersion() throws IOException {
         assertThat(Timezone.getVersion("TZDB"), is(STD_VERSION));
-        Timezone.of("Pacific/Tongatapu").dump(System.out);
+        Timezone.of("Pacific/Fiji").dump(System.out);
     }
 
     @Test
