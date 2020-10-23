@@ -37,7 +37,7 @@ public class RepositoryTest {
         TZDATA.init();
     }
 
-    private static final String STD_VERSION = "2020c";
+    private static final String STD_VERSION = "2020d";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
