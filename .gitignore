@@ -62,5 +62,6 @@ $RECYCLE.BIN/
 *.msp
 
 # Windows shortcuts
+bundle.bat
 *.lnk
 /target/
