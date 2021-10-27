@@ -1,6 +1,6 @@
 /*
  * -----------------------------------------------------------------------
- * Copyright © 2013-2019 Meno Hochschild, <http://www.menodata.de/>
+ * Copyright © 2013-2021 Meno Hochschild, <http://www.menodata.de/>
  * -----------------------------------------------------------------------
  * This file (TimezoneRepositoryProviderSPI.java) is part of project Time4J.
  *
@@ -77,6 +77,11 @@ public class TimezoneRepositoryProviderSPI
 
     //~ Konstruktoren -----------------------------------------------------
 
+    /**
+     * Standard constructor loading the repository.
+     * 
+     * @throws  IllegalStateException if loading the repository fails
+     */
     public TimezoneRepositoryProviderSPI() {
         super();
 
@@ -192,7 +197,7 @@ public class TimezoneRepositoryProviderSPI
 
                     this.leapsecs.put(
                         PlainDate.of(year, month, dom),
-                        Integer.valueOf(shift));
+                        shift);
                 }
 
                 int year = dis.readShort();
@@ -274,7 +279,7 @@ public class TimezoneRepositoryProviderSPI
                 return (TransitionHistory) ois.readObject();
             }
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e);
         }
 
         return null;
