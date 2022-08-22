@@ -37,7 +37,7 @@ public class RepositoryTest {
         TZDATA.init();
     }
 
-    private static final String STD_VERSION = "2022a";
+    private static final String STD_VERSION = "2022c";
     private static final ChronoFormatter<Moment> PARSER = Iso8601Format.EXTENDED_DATE_TIME_OFFSET;
 
     private String propertyValue = null;
@@ -366,17 +366,18 @@ public class RepositoryTest {
         checkTransitions(zoneID, start, end, data);
     }
 
-    @Test
-    public void tzEuropeOslo() throws ParseException {
-        String zoneID = "Europe/Oslo";
-        int start = 1940;
-        int end = 1942;
-        Object[][] data = {
-            {"1940-08-10T23:00+01:00", 1, 2, 1},
-            {"1942-11-02T03:00+02:00", 2, 1, 0},
-        };
-        checkTransitions(zoneID, start, end, data);
-    }
+// old data now only available in backzone which is not involved in tz-repo
+//    @Test
+//    public void tzEuropeOslo() throws ParseException {
+//        String zoneID = "Europe/Oslo";
+//        int start = 1940;
+//        int end = 1942;
+//        Object[][] data = {
+//            {"1940-08-10T23:00+01:00", 1, 2, 1},
+//            {"1942-11-02T03:00+02:00", 2, 1, 0},
+//        };
+//        checkTransitions(zoneID, start, end, data);
+//    }
 
     @Test
     public void tzEuropeBrussels() throws ParseException {
@@ -653,6 +654,13 @@ public class RepositoryTest {
         assertThat(tz.isDaylightSaving(m1970), is(true));
 
         tz.dump(System.out);
+    }
+    
+    @Test
+    public void tzEuropeKiev() {
+        Timezone tz1 = Timezone.of("Europe/Kiev");
+        Timezone tz2 = Timezone.of("Europe/Kyiv");
+        assertThat(tz1.getHistory(), is(tz2.getHistory()));
     }
 
     @Test
