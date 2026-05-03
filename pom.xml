@@ -217,6 +217,19 @@
                             <executable>gpg.exe</executable>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.10.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <checksums>required</checksums>
+                            <autoPublish>false</autoPublish>
+                            <waitUntil>validated</waitUntil>
+                            <deploymentName>${project.name}</deploymentName>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
